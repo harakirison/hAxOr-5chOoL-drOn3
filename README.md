@@ -18,6 +18,10 @@ https://www.mikrocontroller-elektronik.de/esp12e-tutorial-einstieg-mit-dem-esp82
 * https://www.youtube.com/watch?v=-fK6NnnAzuo
 
 ### Parts:
+
+#### Flight Controller
+* https://www.ebay.de/itm/F18730-SP-RACING-F3-EVO-Flugsteuerung-durch-Indoor-Coreless/152819911419?hash=item2394c6cafb:g:MVcAAOSw4shX4OKQ:rk:1:pf:0
+
 #### Motors:
 * https://de.aliexpress.com/item/10PCS-716-Coreless-Motor-Magnetic-Mini-HM-Motor-For-Helicopter-Airplane-Robotic/32793657274.html?spm=a2g0s.9042311.0.0.27424c4dLXVxpM
 * https://de.aliexpress.com/item/10PCS-LOT-NdFeB-Super-Magnetic-8520-Hollow-Cup-Motor-3V-45000-RPM-Quadcopter-Model-Aircraft-Motor/32829046922.html?spm=a2g0s.9042311.0.0.1b244c4d0afw6P
@@ -32,4 +36,4 @@ https://www.mikrocontroller-elektronik.de/esp12e-tutorial-einstieg-mit-dem-esp82
 * https://de.aliexpress.com/item/LST-S2-5-8g-800TVL-HD-Micro-CMOS-FPV-Kamera-150-Grad-Winkel-Von-Ansicht-3/32856883661.html?spm=a2g0s.9042311.0.0.27424c4dLXVxpM
 
 #### RX
-https://de.aliexpress.com/item/Free-Shipping-10pcs-lot-ESP8266-remote-serial-Port-WIFI-wireless-module-through-walls-Wang-ESP-12/1967135461.html?spm=a2g0s.9042311.0.0.1b244c4d0afw6P
+* https://de.aliexpress.com/item/Free-Shipping-10pcs-lot-ESP8266-remote-serial-Port-WIFI-wireless-module-through-walls-Wang-ESP-12/1967135461.html?spm=a2g0s.9042311.0.0.1b244c4d0afw6P
