@@ -7,6 +7,10 @@ https://www.instructables.com/id/Wifi-PPM-no-App-Needed/
 
 https://www.mikrocontroller-elektronik.de/esp12e-tutorial-einstieg-mit-dem-esp8266-modul/
 
+### Propeller
+
+* https://www.youtube.com/watch?v=CKGabWs2Ih0
+
 
 ### Useful-Links:
 * https://www.youtube.com/watch?v=J66_8P043ko
