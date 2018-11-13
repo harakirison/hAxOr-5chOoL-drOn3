@@ -10,16 +10,16 @@
 #include <WebSocketsServer.h>
 #include <Hash.h>
 
-/* Set these to your desired credentials. */
-
 #define CPU_MHZ 80
 #define CHANNEL_NUMBER 8  //set the number of chanels
 #define CHANNEL_DEFAULT_VALUE 1100  //set the default servo value
 #define FRAME_LENGTH 22500  //set the PPM frame length in microseconds (1ms = 1000µs)
 #define PULSE_LENGTH 300  //set the pulse length
-#define onState 0  //set polarity of the pulses: 1 is positive, 0 is negative
-#define sigPin 5 //set PPM signal output pin on the arduino
+#define ON_STATE 0  //set polarity of the pulses: 1 is positive, 0 is negative
+#define SIG_PIN 5 //set PPM signal output pin on the arduino
+#define AP_MODE 1 //set to WIFI Access Point or Client mode
 
+/* Set these to your desired credentials. */
 const char *ssid = "WifiPPM";
 const char *password = "Wifi_PPM";
 
@@ -38,7 +38,7 @@ void inline ppmISR(void) {
   static boolean state = true;
 
   if (state) {  //start pulse
-    digitalWrite(sigPin, onState);
+    digitalWrite(SIG_PIN, ON_STATE);
     next = next + (PULSE_LENGTH * CPU_MHZ);
     state = false;
     alivecount++;
@@ -47,7 +47,7 @@ void inline ppmISR(void) {
     static byte cur_chan_numb;
     static unsigned int calc_rest;
 
-    digitalWrite(sigPin, !onState);
+    digitalWrite(SIG_PIN, !ON_STATE);
     state = true;
 
     if (cur_chan_numb >= CHANNEL_NUMBER) {
@@ -65,6 +65,9 @@ void inline ppmISR(void) {
   timer0_write(next);
 }
 
+/*
+ * Handle webserver call of root element
+ */
 void handleRoot() {
   if (ppm_running == 0) {
     noInterrupts();
@@ -83,6 +86,9 @@ void handleRoot() {
   server.send_P(200, "text/html", index_html);
 }
 
+/*
+ * Handle WebSocket events
+ */
 void webSocketEvent(uint8_t num, WStype_t type, uint8_t * payload, size_t length) {
   switch (type) {
     case WStype_DISCONNECTED: {
@@ -108,13 +114,46 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t * payload, size_t length
   }
 }
 
-void setup() {
-  pinMode(sigPin, OUTPUT);
-  digitalWrite(sigPin, !onState); //set the PPM signal pin to the default state (off)
-
-  /* You can remove the password parameter if you want the AP to be open. */
-  WiFi.softAP(ssid, password, 2);
+/*
+ * Setup WIFI either with Access-Point mode or Client mode.
+ * Depends on directive AP_MODE:
+ *  1 = Access-Point mode
+ *  0 = Client mode
+ */
+void setupWiFi() {
+  if(AP_MODE) {
+    WiFi.softAP(ssid, password, 2);
+    return;
+  }
   
+  WiFi.begin(ssid, password);
+  Serial.print("Connecting to WiFi");
+  
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+    Serial.print(".");
+  }
+  Serial.println();
+  Serial.print("Connected with IP: ");
+  Serial.println(WiFi.localIP());
+}
+
+/*
+ * Main setup
+ */
+void setup() {
+  // Setup Serial port
+  Serial.begin(115200);
+
+
+  // Setup PPM output
+  pinMode(SIG_PIN, OUTPUT);
+  digitalWrite(SIG_PIN, !ON_STATE); //set the PPM signal pin to the default state (off)
+
+  // Setup WIFI (AP or Client)
+  setupWiFi();
+
+  // Register webserver handlers
   server.onNotFound(handleRoot);
   server.on("/", handleRoot);
   
@@ -159,6 +198,8 @@ void setup() {
   });
 
   server.begin();
+
+  // Init WebSocket server
   webSocket.onEvent(webSocketEvent);
   webSocket.begin();
 
@@ -170,11 +211,12 @@ void setup() {
   for (int i = 0; i < CHANNEL_NUMBER; i++) {
     ppm[i] = CHANNEL_DEFAULT_VALUE;
   }
-  
   interrupts();
-  Serial.begin(115200);
 }
 
+/*
+ * Main loop
+ */
 void loop() {
   webSocket.loop();
   server.handleClient();
