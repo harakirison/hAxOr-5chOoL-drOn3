@@ -1,15 +1,15 @@
 /*
- * Small webserver with HTML5 interface that creates PPM signals for flight controller.
- * Original source: https://www.instructables.com/id/Wifi-PPM-no-App-Needed/
- * 
- * Modified and optimized for hAxOr-5chOoL-drOn3
- */
+   Small webserver with HTML5 interface that creates PPM signals for flight controller.
+   Original source: https://www.instructables.com/id/Wifi-PPM-no-App-Needed/
+
+   Modified and optimized for hAxOr-5chOoL-drOn3
+*/
 
 #include <ESP8266WiFi.h>
 #include <ESP8266WebServer.h>
 #include <WebSocketsServer.h>
-#include <Hash.h>
 
+#define DEBUG 1 // set debug mode when value is 1
 #define CPU_MHZ 80
 #define CHANNEL_NUMBER 8  //set the number of chanels
 #define CHANNEL_DEFAULT_VALUE 1100  //set the default servo value
@@ -34,7 +34,10 @@ extern const char index_html[];
 ESP8266WebServer server (80);
 WebSocketsServer webSocket = WebSocketsServer(81);
 
-void inline ppmISR(void) {
+/**
+ * @brief Send PPM signal
+ */
+void inline ppmISR() {
   static boolean state = true;
 
   if (state) {  //start pulse
@@ -65,9 +68,9 @@ void inline ppmISR(void) {
   timer0_write(next);
 }
 
-/*
- * Handle webserver call of root element
- */
+/**
+   @brief Handle webserver call of root element
+*/
 void handleRoot() {
   if (ppm_running == 0) {
     noInterrupts();
@@ -75,26 +78,84 @@ void handleRoot() {
     timer0_attachInterrupt(ppmISR);
     next = ESP.getCycleCount() + 1000;
     timer0_write(next);
-    
+
     for (int i = 0; i < CHANNEL_NUMBER; i++) {
       ppm[i] = CHANNEL_DEFAULT_VALUE;
     }
-    
+
     ppm_running = 1;
     interrupts();
   }
   server.send_P(200, "text/html", index_html);
 }
 
-/*
- * Handle WebSocket events
- */
+/**
+   @brief Handle webserver response to /upload uri
+*/
+void handleUploadResponse() {
+  server.sendHeader("Connection", "close");
+  server.sendHeader("Access-Control-Allow-Origin", "*");
+  server.send(200, "text/plain", (Update.hasError()) ? "FAIL" : "OK");
+  ESP.restart();
+}
+
+/**
+   @brief Handle upload itself
+*/
+void handleUpload() {
+  HTTPUpload& upload = server.upload();
+  if (upload.status == UPLOAD_FILE_START) {
+    uint32_t maxSketchSpace = (ESP.getFreeSketchSpace() - 0x1000) & 0xFFFFF000;
+    if (!Update.begin(maxSketchSpace)) { //start with max available size
+      //         Update.printError(Serial);
+    }
+  }
+  else if (upload.status == UPLOAD_FILE_WRITE) {
+    if (Update.write(upload.buf, upload.currentSize) != upload.currentSize) {
+      //          Update.printError(Serial);
+    }
+  }
+  else if (upload.status == UPLOAD_FILE_END) {
+    if (Update.end(true)) { //true to set the size to the current progress
+      //         Serial.printf("Update Success: %u\nRebooting...\n", upload.totalSize);
+    } else {
+      //          Update.printError(Serial);
+    }
+    //       Serial.setDebugOutput(false);
+  }
+  yield();
+}
+
+/**
+   @brief Handle webserver response to /update uri
+
+   Return html content for update form
+*/
+void handleUpdate() {
+  noInterrupts();
+  timer0_detachInterrupt();
+  ppm_running = 0;
+  interrupts();
+  delay(500);
+  server.sendHeader("Connection", "close");
+  server.sendHeader("Access-Control-Allow-Origin", "*");
+  server.send(200, "text/html", serverIndex);
+}
+
+/**
+   @brief Handle WebSocket events
+
+   @param num
+   @param type
+   @param payload
+   @param length
+*/
 void webSocketEvent(uint8_t num, WStype_t type, uint8_t * payload, size_t length) {
   switch (type) {
     case WStype_DISCONNECTED: {
         ppm[0] = 1100; ppm[1] = 1500; ppm[2] = 1500; ppm[3] = 1500;
         ppm[4] = 1100; ppm[5] = 1100; ppm[6] = 1100; ppm[7] = 1100;
-        Serial.println("Disconnect");
+        Serial.println("Connection to WebSocket closed...");
       }
       break;
     case WStype_CONNECTED: {
@@ -102,33 +163,42 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t * payload, size_t length
         webSocket.sendTXT(num, "Connected");
         ppm[0] = 1100; ppm[1] = 1500; ppm[2] = 1500; ppm[3] = 1500;
         ppm[4] = 1100; ppm[5] = 1100; ppm[6] = 1100; ppm[7] = 1100;
-        Serial.println("Connect");
+        Serial.println("Connection to WebSocket established...");
       }
       break;
     case WStype_BIN: {
         ppm[payload[0]] = (payload[1] << 8) + payload[2];
         alivecount = 0;
-        Serial.println("Command");
+
+        if (DEBUG == 1)
+        {
+          Serial.print("Received command on channel: ");
+          Serial.print(payload[0]);
+          Serial.print(" : ");
+          Serial.println((payload[1] << 8) + payload[2]);
+        }
+
       }
       break;
   }
 }
 
-/*
- * Setup WIFI either with Access-Point mode or Client mode.
- * Depends on directive AP_MODE:
- *  1 = Access-Point mode
- *  0 = Client mode
- */
+/**
+   @brief Setup WIFI either with Access-Point mode or Client mode.
+
+   Mode depends on directive AP_MODE:
+    1 = Access-Point mode
+    0 = Client mode
+*/
 void setupWiFi() {
-  if(AP_MODE) {
+  if (AP_MODE) {
     WiFi.softAP(ssid, password, 2);
     return;
   }
-  
+
   WiFi.begin(ssid, password);
   Serial.print("Connecting to WiFi");
-  
+
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
     Serial.print(".");
@@ -138,68 +208,29 @@ void setupWiFi() {
   Serial.println(WiFi.localIP());
 }
 
-/*
- * Main setup
- */
+/**
+   @brief Main setup
+*/
 void setup() {
-  // Setup Serial port
+  // Setup serial port
   Serial.begin(115200);
 
-
-  // Setup PPM output
+  // Setup PPM output pin and set the PPM signal
+  // pin to the default state (off)
   pinMode(SIG_PIN, OUTPUT);
-  digitalWrite(SIG_PIN, !ON_STATE); //set the PPM signal pin to the default state (off)
+  digitalWrite(SIG_PIN, !ON_STATE);
 
-  // Setup WIFI (AP or Client)
+  // Setup WIFI (AP or Client mode)
   setupWiFi();
 
-  // Register webserver handlers
+  // Setup HTTP webserver and register handlers
   server.onNotFound(handleRoot);
   server.on("/", handleRoot);
-  
-  server.on("/update", HTTP_GET, []() {
-    noInterrupts();
-    timer0_detachInterrupt();
-    ppm_running = 0;
-    interrupts();
-    delay(500);
-    server.sendHeader("Connection", "close");
-    server.sendHeader("Access-Control-Allow-Origin", "*");
-    server.send(200, "text/html", serverIndex);
-  });
-
-  server.on("/upload", HTTP_POST, []() {
-    server.sendHeader("Connection", "close");
-    server.sendHeader("Access-Control-Allow-Origin", "*");
-    server.send(200, "text/plain", (Update.hasError()) ? "FAIL" : "OK");
-    ESP.restart();
-  }, []() {
-    HTTPUpload& upload = server.upload();
-    if (upload.status == UPLOAD_FILE_START) {
-      uint32_t maxSketchSpace = (ESP.getFreeSketchSpace() - 0x1000) & 0xFFFFF000;
-      if (!Update.begin(maxSketchSpace)) { //start with max available size
-        //         Update.printError(Serial);
-      }
-    }
-    else if (upload.status == UPLOAD_FILE_WRITE) {
-      if (Update.write(upload.buf, upload.currentSize) != upload.currentSize) {
-        //          Update.printError(Serial);
-      }
-    }
-    else if (upload.status == UPLOAD_FILE_END) {
-      if (Update.end(true)) { //true to set the size to the current progress
-        //         Serial.printf("Update Success: %u\nRebooting...\n", upload.totalSize);
-      } else {
-        //          Update.printError(Serial);
-      }
-      //       Serial.setDebugOutput(false);
-    }
-    yield();
-  });
-
+  server.on("/update", HTTP_GET, handleUpdate);
+  server.on("/upload", HTTP_POST, handleUploadResponse, handleUpload);
   server.begin();
 
-  // Init WebSocket server
+  // Setup WebSocket server
   webSocket.onEvent(webSocketEvent);
   webSocket.begin();
 
@@ -214,9 +245,9 @@ void setup() {
   interrupts();
 }
 
-/*
- * Main loop
- */
+/**
+   @brief Main loop
+*/
 void loop() {
   webSocket.loop();
   server.handleClient();
@@ -228,6 +259,5 @@ void loop() {
       ppm[i] = 1100;
     }
   }
-
   yield();
 }
