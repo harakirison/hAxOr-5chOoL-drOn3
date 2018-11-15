@@ -35,8 +35,8 @@ ESP8266WebServer server (80);
 WebSocketsServer webSocket = WebSocketsServer(81);
 
 /**
- * @brief Send PPM signal
- */
+   @brief Send PPM signal
+*/
 void inline ppmISR() {
   static boolean state = true;
 
@@ -69,7 +69,7 @@ void inline ppmISR() {
 }
 
 /**
-   @brief Handle webserver call of root element
+    @brief Handle webserver call of root element
 */
 void handleRoot() {
   if (ppm_running == 0) {
@@ -90,7 +90,7 @@ void handleRoot() {
 }
 
 /**
-   @brief Handle webserver response to /upload uri
+    @brief Handle webserver response to /upload uri
 */
 void handleUploadResponse() {
   server.sendHeader("Connection", "close");
