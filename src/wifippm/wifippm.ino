@@ -252,12 +252,8 @@ void loop() {
   webSocket.loop();
   server.handleClient();
   if (alivecount > 1000) {
-    for (int i = 0; i < 4; i++) {
-      ppm[i] = 1500;
-    }
-    for (int i = 4; i < 8; i++) {
-      ppm[i] = 1100;
-    }
+    ppm[0] = 1100; ppm[1] = 1500; ppm[2] = 1500; ppm[3] = 1500;
+    ppm[4] = 1100; ppm[5] = 1100; ppm[6] = 1100; ppm[7] = 1100;
   }
   yield();
 }
