@@ -21,3 +21,13 @@
 * Verify and upload program
   * [Blinky](https://github.com/harakirison/hAxOr-5chOoL-drOn3/tree/master/src/blinky) (test program with flashing led light)
   * [Drone HTML5 controller](https://github.com/harakirison/hAxOr-5chOoL-drOn3/tree/master/src/wifippm)
+
+## Settings in BetaFlight
+* Go to Receiver settings
+* Make the following settings 
+  * Channel Map value: RTAE1234
+  * Stick Low Threshold: 1020
+  * Stick Center: 1496
+  * Stick High Threshold: 1980
+  * RC Deadband: 5
+  * Yaw Deadband: 5
