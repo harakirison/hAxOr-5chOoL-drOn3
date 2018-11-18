@@ -175,7 +175,7 @@ void setup() {
   setupWiFi();
 
   // Setup HTTP update server
-   httpUpdater.setup(&server);
+  httpUpdater.setup(&server);
 
   // Setup HTTP webserver and register handlers
   server.onNotFound(handleRoot);
@@ -192,7 +192,7 @@ void setup() {
   next = ESP.getCycleCount() + 1000;
   timer0_write(next);
   resetPPM();
-  
+
   interrupts();
 }
 
@@ -202,7 +202,7 @@ void setup() {
 void loop() {
   webSocket.loop();
   server.handleClient();
-  
+
   if (alivecount > 1000) {
     resetPPM();
   }
