@@ -3,7 +3,11 @@
 ![ESP8266 Overview!](https://www.mikrocontroller-elektronik.de/wp-content/uploads/2017/02/ESP12E-Pinbelegung-1-768x537.png)
 
 ## Documentation
+### Software
 * [ESP8266 Wifi library](https://arduino-esp8266.readthedocs.io/en/latest/esp8266wifi/readme.html)
+
+### Hardware
+* [F3 Evo Soldering](https://www.instructables.com/id/How-to-Solder-the-F3-EVO-Brushed-Flight-Controller/)
 
 ## Setting up Development Environment
 * Download and install Arduino softwarefrom https://www.arduino.cc/en/Main/Software
