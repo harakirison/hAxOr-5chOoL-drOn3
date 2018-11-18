@@ -7,7 +7,6 @@
 
 #include <ESP8266WiFi.h>
 #include <ESP8266WebServer.h>
-#include <ESP8266HTTPUpdateServer.h>
 #include <WebSocketsServer.h>
 
 #define DEBUG 1 // set debug mode when value is 1
@@ -33,7 +32,6 @@ unsigned int alivecount = 0;
 extern const char index_html[];
 
 ESP8266WebServer server (80);
-ESP8266HTTPUpdateServer httpUpdater;
 WebSocketsServer webSocket = WebSocketsServer(81);
 
 /**
@@ -141,7 +139,7 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t * payload, size_t length
     1 = Access-Point mode
     0 = Client mode
 */
-void setupWiFi() {
+void inline setupWiFi() {
   if (AP_MODE) {
     WiFi.softAP(ssid, password, 2);
     return;
@@ -174,11 +172,7 @@ void setup() {
   // Setup WIFI (AP or Client mode)
   setupWiFi();
 
-  // Setup HTTP update server
-  httpUpdater.setup(&server);
-
   // Setup HTTP webserver and register handlers
-  server.onNotFound(handleRoot);
   server.on("/", handleRoot);
   server.begin();
 
@@ -192,7 +186,6 @@ void setup() {
   next = ESP.getCycleCount() + 1000;
   timer0_write(next);
   resetPPM();
-
   interrupts();
 }
 
