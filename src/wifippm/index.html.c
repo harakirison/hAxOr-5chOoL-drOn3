@@ -117,9 +117,7 @@ char index_html[] PROGMEM = R"=====(
        var alarm;
       var alarmfreq=0;
 
-  //var connection = new WebSocket('ws://' + window.location.host + ':81',"dumb-increment-protocol"); n"
       var connection = new WebSocket('ws://' + window.location.host + ':81', ['arduino']);
-//      var connection = new WebSocket('ws://192.168.4.1:81', ['arduino']);
   
       connection.onopen = function () {         //open
         console.log("Websocket Open");
@@ -197,7 +195,7 @@ char index_html[] PROGMEM = R"=====(
   
       connection.onclose = function (e)
       {
-          console.log("Websocket close");
+        console.log("Websocket close");
         wsconnect=0;
         draw_stick(ctx_stickl,ctx_stickl.canvas.width/2,ctx_stickl.canvas.height,0,1);
         draw_stick(ctx_stickr,ctx_stickr.canvas.width/2,ctx_stickr.canvas.height/2,2,3);
@@ -215,7 +213,7 @@ char index_html[] PROGMEM = R"=====(
             alert('Web Audio API is not supported in this browser -> no audio\n Try Google Chrome or Firefox instead.');
           }
 
-           audioCtx=new(window.AudioContext || window.webkitAudioContext)();
+          audioCtx=new(window.AudioContext || window.webkitAudioContext)();
           oscillator=audioCtx.createOscillator();
           gainNode=audioCtx.createGain();
           gainNode.gain.value = 0.5;

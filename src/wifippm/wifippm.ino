@@ -23,9 +23,11 @@
 const char *ssid = "WifiPPM";
 const char *password = "Wifi_PPM";
 
+/* PPM[0]=Yaw, PPM[1}=Throttle, PPM[2]=Roll, PPM[3]=Pitch, PPM[4]=Button1, PPM[5]=Button2, PPM[5]=Button3, PPM[5]=Button4 */
+int ppm[CHANNEL_NUMBER];
+
 volatile unsigned long next;
 volatile unsigned int ppm_running = 1;
-int ppm[CHANNEL_NUMBER];
 unsigned int alivecount = 0;
 
 const char* serverIndex = "<form method='POST' action='/upload' enctype='multipart/form-data'><input type='file' name='update'><input type='submit' value='Update'></form>";
@@ -66,6 +68,14 @@ void inline ppmISR() {
     }
   }
   timer0_write(next);
+}
+
+/**
+   @brief Sets PPM output to default value
+*/
+void inline resetPPM() {
+  ppm[0] = 1500; ppm[1] = 1100; ppm[2] = 1500; ppm[3] = 1500;
+  ppm[4] = 1100; ppm[5] = 1100; ppm[6] = 1100; ppm[7] = 1100;
 }
 
 /**
@@ -153,16 +163,14 @@ void handleUpdate() {
 void webSocketEvent(uint8_t num, WStype_t type, uint8_t * payload, size_t length) {
   switch (type) {
     case WStype_DISCONNECTED: {
-        ppm[0] = 1100; ppm[1] = 1500; ppm[2] = 1500; ppm[3] = 1500;
-        ppm[4] = 1100; ppm[5] = 1100; ppm[6] = 1100; ppm[7] = 1100;
+        resetPPM();
         Serial.println("Connection to WebSocket closed...");
       }
       break;
     case WStype_CONNECTED: {
         // send message to client
         webSocket.sendTXT(num, "Connected");
-        ppm[0] = 1100; ppm[1] = 1500; ppm[2] = 1500; ppm[3] = 1500;
-        ppm[4] = 1100; ppm[5] = 1100; ppm[6] = 1100; ppm[7] = 1100;
+        resetPPM();
         Serial.println("Connection to WebSocket established...");
       }
       break;
@@ -252,8 +260,7 @@ void loop() {
   webSocket.loop();
   server.handleClient();
   if (alivecount > 1000) {
-    ppm[0] = 1100; ppm[1] = 1500; ppm[2] = 1500; ppm[3] = 1500;
-    ppm[4] = 1100; ppm[5] = 1100; ppm[6] = 1100; ppm[7] = 1100;
+    resetPPM();
   }
   yield();
 }
