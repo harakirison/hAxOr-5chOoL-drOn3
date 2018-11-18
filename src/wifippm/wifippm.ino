@@ -107,21 +107,21 @@ void handleUpload() {
   if (upload.status == UPLOAD_FILE_START) {
     uint32_t maxSketchSpace = (ESP.getFreeSketchSpace() - 0x1000) & 0xFFFFF000;
     if (!Update.begin(maxSketchSpace)) { //start with max available size
-      //         Update.printError(Serial);
+      Update.printError(Serial);
     }
   }
   else if (upload.status == UPLOAD_FILE_WRITE) {
     if (Update.write(upload.buf, upload.currentSize) != upload.currentSize) {
-      //          Update.printError(Serial);
+      Update.printError(Serial);
     }
   }
   else if (upload.status == UPLOAD_FILE_END) {
     if (Update.end(true)) { //true to set the size to the current progress
-      //         Serial.printf("Update Success: %u\nRebooting...\n", upload.totalSize);
+      Serial.printf("Update Success: %u\nRebooting...\n", upload.totalSize);
     } else {
-      //          Update.printError(Serial);
+      Update.printError(Serial);
     }
-    //       Serial.setDebugOutput(false);
+    Serial.setDebugOutput(false);
   }
   yield();
 }
@@ -253,7 +253,7 @@ void loop() {
   server.handleClient();
   if (alivecount > 1000) {
     for (int i = 0; i < 4; i++) {
-      ppm[i] = 900;
+      ppm[i] = 1500;
     }
     for (int i = 4; i < 8; i++) {
       ppm[i] = 1100;
