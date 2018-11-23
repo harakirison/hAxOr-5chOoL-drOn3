@@ -3,7 +3,11 @@
 ![ESP8266 Overview!](https://www.mikrocontroller-elektronik.de/wp-content/uploads/2017/02/ESP12E-Pinbelegung-1-768x537.png)
 
 ## Documentation
+### Software
 * [ESP8266 Wifi library](https://arduino-esp8266.readthedocs.io/en/latest/esp8266wifi/readme.html)
+
+### Hardware
+* [F3 Evo Soldering](https://www.instructables.com/id/How-to-Solder-the-F3-EVO-Brushed-Flight-Controller/)
 
 ## Setting up Development Environment
 * Download and install Arduino softwarefrom https://www.arduino.cc/en/Main/Software
@@ -21,3 +25,13 @@
 * Verify and upload program
   * [Blinky](https://github.com/harakirison/hAxOr-5chOoL-drOn3/tree/master/src/blinky) (test program with flashing led light)
   * [Drone HTML5 controller](https://github.com/harakirison/hAxOr-5chOoL-drOn3/tree/master/src/wifippm)
+
+## Settings in BetaFlight
+* Go to Receiver settings
+* Make the following settings 
+  * Channel Map value: RTAE1234
+  * Stick Low Threshold: 1020
+  * Stick Center: 1496
+  * Stick High Threshold: 1980
+  * RC Deadband: 5
+  * Yaw Deadband: 5
