@@ -21,7 +21,7 @@
 
 /* Set these to your desired credentials. */
 const char *ssid = "WifiPPM";
-const char *password = "Wifi_PPM";
+const char *password = "PPM";
 
 volatile unsigned long next;
 volatile unsigned int ppm_running = 1;
