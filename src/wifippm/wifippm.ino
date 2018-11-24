@@ -9,7 +9,6 @@
 #include <ESP8266WebServer.h>
 #include <WebSocketsServer.h>
 
-#define DEBUG 1 // set debug mode when value is 1
 #define CPU_MHZ 80
 #define CHANNEL_NUMBER 8  //set the number of chanels
 #define FRAME_LENGTH 22500  //set the PPM frame length in microseconds (1ms = 1000µs)
@@ -118,15 +117,6 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t * payload, size_t length
     case WStype_BIN: {
         ppm[payload[0]] = (payload[1] << 8) + payload[2];
         alivecount = 0;
-
-        if (DEBUG == 1)
-        {
-          Serial.print("Received command on channel: ");
-          Serial.print(payload[0]);
-          Serial.print(" : ");
-          Serial.println((payload[1] << 8) + payload[2]);
-        }
-
       }
       break;
   }
