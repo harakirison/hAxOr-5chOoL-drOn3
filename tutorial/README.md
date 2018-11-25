@@ -5,6 +5,7 @@
 ## Documentation
 ### Software
 * [ESP8266 Wifi library](https://arduino-esp8266.readthedocs.io/en/latest/esp8266wifi/readme.html)
+* [PID/Rate Settings](http://www.koptertreff.de/f21-tipps-amp-tutorials/t79-tutorial-rates-in-betaflight-einstellen)
 
 ### Hardware
 * [F3 Evo Soldering](https://www.instructables.com/id/How-to-Solder-the-F3-EVO-Brushed-Flight-Controller/)
