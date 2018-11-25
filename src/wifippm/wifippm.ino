@@ -19,7 +19,7 @@
 
 /* Set these to your desired credentials. */
 const char *ssid = "WifiPPM";
-const char *password = "PPM";
+const char *password = "Wifi_PPM";
 
 /* PPM[0]=Yaw, PPM[1}=Throttle, PPM[2]=Roll, PPM[3]=Pitch, PPM[4]=Button1, PPM[5]=Button2, PPM[5]=Button3, PPM[5]=Button4 */
 int ppm[CHANNEL_NUMBER];

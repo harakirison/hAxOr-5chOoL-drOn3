@@ -167,6 +167,7 @@ char index_html[] PROGMEM = R"=====(
         console.log("endr");
         endr = 1;
         window.requestAnimationFrame(update);
+        window.requestAnimationFrame(update);
       });
       c_stickr.addEventListener('touchmove', function (event) {
         event.preventDefault();
@@ -257,8 +258,8 @@ char index_html[] PROGMEM = R"=====(
       context.strokeStyle = '#003300';
       context.stroke();
 
-      ppm[ppm0] = parseInt(1000 + ((1000 / context.canvas.width) * x))
-      ppm[ppm1] = parseInt(2000 - ((1000 / context.canvas.height) * y))
+      ppm[ppm0] = parseInt(1000 + ((1000 / context.canvas.width) * x));
+      ppm[ppm1] = parseInt(2000 - ((1000 / context.canvas.height) * y));
     }
 
     function draw_background(ctx) {
@@ -327,6 +328,8 @@ char index_html[] PROGMEM = R"=====(
           sendframe[2] = ppm[i];
           if (wsconnect)
             connection.send(sendframe);
+
+          console.log(i + " : " + ppm[i]);
         }
       }
       if (gamepads[0]) {
@@ -363,6 +366,10 @@ char index_html[] PROGMEM = R"=====(
             draw_stick(ctx_stickl, px, py, 0, 1);
           }
           if (touch.target.id == "Canvas_stickl" && endl) {
+            if (py < 0)
+              py = 0;
+            if (py > ctx_stickl.canvas.height)
+              py = ctx_stickl.canvas.height;
             draw_stick(ctx_stickl, ctx_stickl.canvas.width / 2, py, 0, 1);
           }
           if (touch.target.id == "Canvas_stickr" && !endr) {
