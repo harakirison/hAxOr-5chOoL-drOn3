@@ -5,6 +5,7 @@
 ## Documentation
 ### Software
 * [ESP8266 Wifi library](https://arduino-esp8266.readthedocs.io/en/latest/esp8266wifi/readme.html)
+* [PID/Rate Settings](http://www.koptertreff.de/f21-tipps-amp-tutorials/t79-tutorial-rates-in-betaflight-einstellen)
 
 ### Hardware
 * [F3 Evo Soldering](https://www.instructables.com/id/How-to-Solder-the-F3-EVO-Brushed-Flight-Controller/)
@@ -27,11 +28,14 @@
   * [Drone HTML5 controller](https://github.com/harakirison/hAxOr-5chOoL-drOn3/tree/master/src/wifippm)
 
 ## Settings in BetaFlight
-* Go to Receiver settings
-* Make the following settings 
+* Go to Receiver settings and make the following settings 
   * Channel Map value: RTAE1234
   * Stick Low Threshold: 1020
   * Stick Center: 1496
   * Stick High Threshold: 1980
   * RC Deadband: 5
   * Yaw Deadband: 5
+* Go to Mode settings and make the following settings
+  * ARM / Aux 1 / 1600-2000
+  * ANGLE / Aux 2 / 900-1300
+  * HORIZON / Aux 2 / 1600-2000
