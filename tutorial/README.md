@@ -28,17 +28,23 @@
   * [Drone HTML5 controller](https://github.com/harakirison/hAxOr-5chOoL-drOn3/tree/master/src/wifippm)
 
 ## Settings in BetaFlight
-* Go to Receiver settings and make the following settings 
+* Go to Receiver settings and make the following changes 
   * Channel Map value: RTAE1234
   * Stick Low Threshold: 1020
   * Stick Center: 1496
   * Stick High Threshold: 1980
   * RC Deadband: 5
   * Yaw Deadband: 5
-* Go to Mode settings and make the following settings
+* Go to Mode settings and make the following changes
   * ARM / Aux 1 / 1600-2000
   * ANGLE / Aux 2 / 900-1300
   * HORIZON / Aux 2 / 1600-2000
+* Go to PID Tuning and make the following changes
+  * RC Rate: 0,40 (Roll, Pitch, Yaw)
+  * Super Rate: 0,20 (Roll, Pitch, Yaw)
+  * RC Expo: 0,70 (Roll, Pitch, Yaw)
+* Go to Configuration and make the following changes
+  * Enable MOTOR_STOP
 
 ## CLI
 set motor_pwm_rate = 32000
