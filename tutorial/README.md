@@ -39,3 +39,6 @@
   * ARM / Aux 1 / 1600-2000
   * ANGLE / Aux 2 / 900-1300
   * HORIZON / Aux 2 / 1600-2000
+
+## CLI
+set motor_pwm_rate = 32000
