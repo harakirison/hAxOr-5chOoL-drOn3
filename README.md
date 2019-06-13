@@ -42,3 +42,6 @@ https://www.mikrocontroller-elektronik.de/esp12e-tutorial-einstieg-mit-dem-esp82
 
 #### RX
 * https://de.aliexpress.com/item/Free-Shipping-10pcs-lot-ESP8266-remote-serial-Port-WIFI-wireless-module-through-walls-Wang-ESP-12/1967135461.html?spm=a2g0s.9042311.0.0.1b244c4d0afw6P
+
+### CLI Commands
+set motor_pwm_rate = 32000
